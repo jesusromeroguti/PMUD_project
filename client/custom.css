@@ -1,0 +1,23 @@
+#titulo{
+    text-align: center;
+}
+
+#divBtn {
+    text-align: center;
+    padding-top: 1%;
+}
+
+#btnRecetas {
+    position: absolute;
+}
+
+#recetas {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+body {
+    background-color: lightblue;
+}
+
+  
