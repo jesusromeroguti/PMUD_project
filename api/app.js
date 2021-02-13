@@ -42,9 +42,6 @@ app.use('*', (request, response, next) => {
 
 // GET /count/:id (id => recetas, ingredientes, componen)
 app.get('/count/:id', (request, response) => {
-    
-    /// ARREGLAR QUE SE PUEDA ESCAPAR CON UN PLACEHOLDER EL NOMBRE DE LA TABLA!!!!
-
     const id = request.params.id;
     const conn = getConnection();
     if (id === 'recetas'){
@@ -301,7 +298,7 @@ app.get('/ingredientes/:id', (request, response) => {
 // POST /ingredientes
 // Creem un nou ingredient
 
-// PUEDE QUE AÑADE LOS INGREDIENTES A LA TABLA DE RECETAS COMO UN STRING O UN TEXTO EN LUGAR DE UNA RELACION CON LLAVE FORANEA!!
+
 
 app.post('/ingredientes', (request, response) => {
     const {nombreIn, cantidad, calorias, prot, carb, gras} = request.body; 

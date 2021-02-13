@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */ 
 let recetaActual;
 
+// Obtiene todas las recetas del server y les da formato en la web cliente.
 function getReceptas(){
     
     var xhr = new XMLHttpRequest();
@@ -21,18 +22,20 @@ function getReceptas(){
                             <div class="card"><p class="card-text">${x['preparacion']}</p></div><br>
                             <h6 class="card-subtitle mb-2 text-muted">Igredients:</h6> 
                             <div style="overflow-x:auto;">
-                            <table class="table table-striped">
+                            <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Calorias</th>
+                                        <th scope="col">Proteinas</th>
                                         <th scope="col">Grasas</th>
-                                        <th scope="col">Proteina</th>
+                                        <th scope="col">Carbohidratos</th>
                                     </tr>
+                                    <tbody class="ingredients" id="${x['id']}">
+                                    </tbody>
                                 </thead>
                             </table>
                             </div>
-                        <div class="ingredients" id="${x['id']}"></div><br>
                         <button type="button" class="btn btn-danger" id="btnDelete" onclick="deleteRecepta(${x['id']})">Eliminar</button>
                         <button type="button" class="btn btn-success" id="btnDelete" onclick="editRecepta(${x['id']})">Editar</button>
                     </div>
@@ -50,6 +53,7 @@ function getReceptas(){
     xhr.send();
 }
 
+// Formulario para añadir nueva receta
 function addRecepta(){
     $("body").html(`<h2>Nueva receta</h2>
     <div class="card">
@@ -110,8 +114,10 @@ function addRecepta(){
     $("#nombre.form-group").css("padding-right", "60%");
     $(".card").css("padding-right", "25%");
     $(".card").css("padding-left", "25%");
+    $("textarea").css("height", "250px");
 }
 
+// Realiza todos los pasos necesarios para editar una receta. Crea el formulario y envia la petición al servidor.
 function editRecepta(id){
     let http = new XMLHttpRequest();
 
@@ -131,13 +137,13 @@ function editRecepta(id){
             let numPersonasDef = r['message'][0]['numPersonas'];
 
             $("body").html(`<h2>Edita la receta</h2>
+            <div class="card">
                 <form>
-                    <div class="form-group">
+                    <div class="form-group" id="nombre">
                         <label for="nombreR">Nombre receta</label>
                         <input type="text" class="form-control" id="nombreC" value="${nombreDef}">
-                        </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="difC">
                         <label for="dificultadS">Dificultad</label>
                         <select class="form-control" id="dificultadC">
                             <option value="facil">facil</option>
@@ -145,11 +151,11 @@ function editRecepta(id){
                             <option value="dificil">dificil</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="tiempoC">
                         <label for="tempsR">Tiempo</label>
                         <input type="text" class="form-control" id="tempsR" placeholder="Tiempo que tardas" value="${tempsDef}">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="valC">
                         <label for="valoracionS">Valoración</label>
                         <select class="form-control" id="valoracionC">
                             <option value="1">1</option>
@@ -159,7 +165,7 @@ function editRecepta(id){
                             <option value="5">5</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="numPC">
                         <label for="numPersonas">Numero de persones</label>
                         <select class="form-control" id="numPersonasC">
                             <option>1</option>
@@ -178,17 +184,28 @@ function editRecepta(id){
                     <button type="button" class="btn btn-success" id="btnCreate" onclick="updateRecepta(${id})">Actualizar</button>
                     <button type="button" class="btn btn-primary" id="btnBack" onclick="back()">Atrás</button>
                 </form>
+                </div>
             `);
 
             $("#dificultadC.form-control").val(dificultadDef);
             $("#valoracionC.form-control").val(valoracionDef);
             $("#numPersonasC.form-control").val(numPersonasDef);
+
+            $("h2").css("text-align", "center");
+            $("#numPC.form-group").css("padding-right", "70%");
+            $("#valC.form-group").css("padding-right", "70%");
+            $("#difC.form-group").css("padding-right", "70%");
+            $("#tiempoC.form-group").css("padding-right", "70%");
+            $("#nombre.form-group").css("padding-right", "60%");
+            $(".card").css("padding-right", "25%");
+            $(".card").css("padding-left", "25%");
+            $("textarea").css("height", "250px");
         } 
     }
     http.send();
 }
 
-
+// Formulario para añadir un ingrediente.
 function addIngredient(){
     $("body").html(`<h2>Nuevo ingrediente</h2>
     <div class="card">
@@ -229,6 +246,7 @@ function addIngredient(){
 
 }
 
+// Recoge los datos del formulario para crear un nuevo ingrediente mediante la correspondiente petición al servidor.
 function createIngredient(){
     let http = new XMLHttpRequest();
     let nombreIn = $("#nombreI").val();
@@ -260,7 +278,7 @@ function createIngredient(){
     http.send(params);
 }
 
-
+// Obtiene todos los ingredientes medinte una petición y los enseña dandole formato en el cliente web.
 function listIngredients(){
     let http = new XMLHttpRequest();
     var url = 'http://localhost:3015/ingredientes/';
@@ -320,6 +338,7 @@ function listIngredients(){
     http.send();
 }
 
+// Actualiza la receta con los datos del formulario mediante una petición al servidor.
 function updateRecepta(id){
     let http = new XMLHttpRequest();
     let dificultad = $("#dificultadC").val();
@@ -350,7 +369,6 @@ function updateRecepta(id){
     http.send(params); 
 }
 
-
 function editIngredients(id){
     let http = new XMLHttpRequest();
     url = 'http://localhost:3015/componen/' + id;
@@ -368,6 +386,7 @@ function editIngredients(id){
 
 }
 
+// Borra la receta seleccionada (incluidos los ingredientes) mediante una petición al servidor.
 function deleteRecepta(id){
     if(confirm("¿Estas seguro/a que quieres eliminar la receta?")){
         let http = new XMLHttpRequest();
@@ -401,6 +420,7 @@ function deleteRecepta(id){
     
 }
 
+// Crea una nueva receta mediante los datos del formulario y una petición al servidor.
 function createRecepta(){
     let http = new XMLHttpRequest();
     let dificultad = $("#dificultadC").val();
@@ -434,6 +454,7 @@ function createRecepta(){
     http.send(params);
 }
 
+// Obtiene la información de una ingrediente específico de una determinada receta.
 function getIngredient(idReceta, idIngrediente){
     let http = new XMLHttpRequest();
     var url = 'http://localhost:3015/ingredientes/' + idIngrediente;
@@ -450,24 +471,21 @@ function getIngredient(idReceta, idIngrediente){
             let carb = r['message'][0]['carb'];
             let gras = r['message'][0]['gras'];
             let prot = r['message'][0]['prot'];
-            // Tengo que pasarle el id de la receta y ahora le estoy pasando el del ingrediente.
             $(`#${idReceta}.ingredients`).append(`
-            <table class="table table-striped">
-                <tbody>
-                    <tr>
-                    <td>${nombre}</td>
-                    <td>${cal}</td>
-                    <td>${gras}</td>
-                    <td>${prot}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <tr> 
+                <td>${nombre}</td> 
+                <td>${cal}</td> 
+                <td>${prot}</td>
+                <td>${gras}</td>
+                <td>${carb}</td>
+                </tr>
             `);
         } 
     }
     http.send();
 }
 
+// Obtiene todos los ingredientes de la receta indicada.
 function getIngredients(id){
     let http = new XMLHttpRequest();
     var url = 'http://localhost:3015/ingredientes/';
@@ -479,15 +497,22 @@ function getIngredients(id){
         if (http.readyState == XMLHttpRequest.DONE) {
             let r = JSON.parse(http.responseText);
             $("body").html(`<h2>Añadir los ingredientes</h2>
+            <div class="card">
             <form>
                 <div class="form-group">
                     <label for="ingredientL">Selecciona los ingredientes</label>
-                    <select multiple class="form-control" id="ingredientsC">
-                    </select>
+                    <div class="sel">
+                    <select multiple class="form-control" id="ingredientsC" style="max-height:90%;">
+                    </select></div>
                 </div>
             </form>
-            <button type="button" class="btn btn-success" id="btnAdd" onclick="addIngredients(${id})">Añadir</button>
+            <div class="btnAdd"><button type="button" class="btn btn-success" id="btnAdd" onclick="addIngredients(${id})">Añadir</button></div>
+            </div>
             `);
+            $("h2").css("text-align", "center");
+            $(".card").css("padding-right", "25%");
+            $(".card").css("padding-left", "25%");
+            $(".btnAdd").css("padding-rigth", "75%");
             for (x of r['message']){
                 let id = x['id'];
                 let nombre = x['nombreIn'];
@@ -498,6 +523,7 @@ function getIngredients(id){
     http.send();
 }
 
+// Obtiene todas las relaciones entre una receta y todos sus ingredientes.
 function getComponen(id){
     let http = new XMLHttpRequest();
     var url = 'http://localhost:3015/componen/' + id;
@@ -522,9 +548,9 @@ function getComponen(id){
     http.send();
 }
 
+// Añade ingredientes a una receta indicada.
 function addIngredients(id){
    let idIngrediente = $('#ingredientsC').val();
-//    console.log(idIngrediente);
    let idReceta = id;
    for(i of idIngrediente){
        console.log(i);
@@ -547,7 +573,7 @@ function addIngredients(id){
 }
 
 
-// Utilizada en el boton enrere.
+// Utilizada en el boton atrás.
 function back(){
     location.reload();
 }
